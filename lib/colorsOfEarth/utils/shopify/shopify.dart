@@ -84,8 +84,4 @@ class Shopify {
     );
     return checkout;
   }
-
-  createOrderFromPackage() {
-    String query = "";
-  }
 }

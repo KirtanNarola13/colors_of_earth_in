@@ -1,14 +1,16 @@
 import 'dart:developer';
 
+import 'package:badges/badges.dart' as badges;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:colors_of_earth/colorsOfEarth/screens/home/components/apiDetailScreen/api_detail_screen.dart';
+import 'package:colors_of_earth/colorsOfEarth/screens/home/components/cart.dart';
+import 'package:colors_of_earth/colorsOfEarth/screens/home/controller/addToCartController.dart';
 import 'package:colors_of_earth/colorsOfEarth/utils/helper/api_helper.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:logger/logger.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:shopify_flutter/models/src/product/product.dart';
@@ -17,7 +19,6 @@ import '../../constant/constant.dart';
 import '../../utils/helper/firestore_helper.dart';
 import '../../utils/shopify/shopify.dart';
 import '../new/view_collection_product/view_collection_product.dart';
-import 'components/cart.dart';
 import 'components/search/search.dart';
 import 'components/view_all/explore_products.dart';
 import 'components/view_all/new_launched_view.dart';
@@ -40,9 +41,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   BannerIndexController bannerIndexController =
       Get.put(BannerIndexController());
-
+  AddToCartController addToCartController = Get.put(AddToCartController());
   @override
   void initState() {
+    OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+    OneSignal.initialize('088cb45d-7d0a-4b81-ba27-b976cca037a7');
+    OneSignal.Notifications.requestPermission(true);
     bannerPageController = PageController(initialPage: 0);
     FirestoreHelper.firestoreHelper.addCollection();
     OneSignal.Notifications.addClickListener((event) {
@@ -77,7 +81,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    Logger logger = Logger();
+    addToCartController.calculateCartLength();
+    // Logger logger = Logger();
     return FutureBuilder(
       future: ApiHelper.apiHelper.getShopDetail(),
       builder: (context, snapshot) {
@@ -125,8 +130,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: Colors.grey.shade700,
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {
+                  SizedBox(
+                    width: width * 0.02,
+                  ),
+                  GestureDetector(
+                    onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -134,13 +142,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       );
                     },
-                    icon: Icon(
+                    child: Icon(
                       Icons.favorite_border,
                       color: Colors.grey.shade700,
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {
+                  SizedBox(
+                    width: width * 0.02,
+                  ),
+                  GestureDetector(
+                    onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -148,10 +159,28 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       );
                     },
-                    icon: Icon(
-                      Icons.shopping_bag_outlined,
-                      color: Colors.grey.shade700,
+                    child: badges.Badge(
+                      badgeContent: Obx(
+                        () => Text(
+                          '${addToCartController.cartLength.value}',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      badgeStyle: badges.BadgeStyle(
+                        badgeColor: Colors.black,
+                      ),
+                      position: badges.BadgePosition.topEnd(top: -10, end: -7),
+                      child: Icon(Icons.shopping_bag_outlined),
                     ),
+                    // child: Icon(
+                    //   Icons.shopping_bag_outlined,
+                    //   color: Colors.grey.shade700,
+                    // ),
+                  ),
+                  SizedBox(
+                    width: width * 0.04,
                   ),
                 ],
               ),

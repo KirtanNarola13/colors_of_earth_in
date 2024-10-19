@@ -1,12 +1,10 @@
-import 'package:colors_of_earth/colorsOfEarth/screens/profile/profile_screen.dart';
+import 'package:colors_of_earth/colorsOfEarth/screens/profile/controller/loginController.dart';
 import 'package:colors_of_earth/colorsOfEarth/utils/helper/api_helper.dart';
-import 'package:delightful_toast/delight_toast.dart';
-import 'package:delightful_toast/toast/components/toast_card.dart';
-import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:line_icons/line_icon.dart';
 import 'package:logger/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
 
 import 'forgot_password.dart';
 
@@ -26,6 +24,34 @@ class _SignInState extends State<SignIn> {
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
     bool isObscure = true;
+
+    showColorsOfEarthLoading() {
+      return showDialog(
+        context: context,
+        builder: (context) {
+          return Container(
+            height: double.infinity,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.5),
+            ),
+            child: Shimmer.fromColors(
+              baseColor: Colors.grey,
+              highlightColor: Colors.transparent,
+              child: Padding(
+                padding: const EdgeInsets.all(60.0),
+                child: Image(
+                  image: AssetImage('assets/colorsOfEarthLogo.png'),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    }
+
+    LoginController loginController = Get.put(LoginController());
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: height * 0.05,
@@ -171,60 +197,31 @@ class _SignInState extends State<SignIn> {
               ),
               GestureDetector(
                 onTap: () {
+                  FocusScope.of(context).unfocus();
+
+                  showColorsOfEarthLoading();
                   ApiHelper.apiHelper
                       .createCustomerAccessToken(
                           emailController.text, passwordController.text)
                       .then((value) async {
                     if (value != null) {
-                      SharedPreferences preferences =
-                          await SharedPreferences.getInstance();
-                      preferences.setBool('isUserLogin', true);
-                      Logger().i(preferences.getBool('isUserLogin'));
-                      DelightToastBar(
-                        autoDismiss: true,
-                        position: DelightSnackbarPosition.bottom,
-                        builder: (context) => const ToastCard(
-                          leading: Icon(
-                            Icons.done_all,
-                            size: 28,
-                            color: Colors.green,
-                          ),
-                          title: Text(
-                            "Login Successfully !",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14,
-                              color: Colors.green,
-                            ),
-                          ),
-                        ),
-                      ).show(context);
+                      Logger().i("Login Success $value");
+                      loginController.Name = emailController.text.obs;
+                      loginController.login();
+                      Navigator.pop(context);
+                      Navigator.pop(context);
 
-                      Navigator.pushReplacement(context, MaterialPageRoute(
-                        builder: (context) {
-                          return const ProfileScreen();
-                        },
-                      ));
+                      // Navigator.pushAndRemoveUntil(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => NavigationBarScreen(
+                      //         initIndex: 3,
+                      //       ),
+                      //     ),
+                      //     (route) => false);
                     } else {
-                      DelightToastBar(
-                        autoDismiss: true,
-                        position: DelightSnackbarPosition.bottom,
-                        builder: (context) => const ToastCard(
-                          leading: Icon(
-                            Icons.close,
-                            size: 28,
-                            color: Colors.red,
-                          ),
-                          title: Text(
-                            "Login Failed !",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14,
-                              color: Colors.red,
-                            ),
-                          ),
-                        ),
-                      ).show(context);
+                      Logger().e("Login failed $value");
+                      Navigator.pop(context);
                     }
                   });
                 },

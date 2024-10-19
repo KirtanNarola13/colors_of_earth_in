@@ -63,8 +63,10 @@ class _WebCheckoutState extends State<WebCheckout> {
             shouldOverrideUrlLoading: (InAppWebViewController controller,
                 NavigationAction navigationAction) async {
               var url = navigationAction.request.url.toString();
-              if (url.contains("thank_you") ||
-                  url == "https://colorsofearth.in/") {
+              if (url.contains("thank_you")) {
+                Navigator.pop(context);
+                return NavigationActionPolicy.CANCEL;
+              } else if (url == "https://colorsofearth.in/") {
                 Navigator.pop(context);
                 return NavigationActionPolicy.CANCEL;
               }

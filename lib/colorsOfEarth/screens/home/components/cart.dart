@@ -1,8 +1,12 @@
 import 'dart:developer';
 
+import 'package:colors_of_earth/colorsOfEarth/screens/home/controller/addToCartController.dart';
+import 'package:colors_of_earth/colorsOfEarth/screens/navbar/navigation_bar.dart';
 import 'package:colors_of_earth/colorsOfEarth/utils/constant/constant.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:line_icons/line_icon.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../../utils/helper/api_helper.dart';
 import 'apiDetailScreen/components/web_checkout.dart';
@@ -15,6 +19,8 @@ class Cart extends StatefulWidget {
 }
 
 class _CartState extends State<Cart> {
+  AddToCartController addToCartController = Get.put(AddToCartController());
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -38,49 +44,59 @@ class _CartState extends State<Cart> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: GestureDetector(
-        onTap: () {
-          final List<Map> data = [];
-          for (int i = 0; i < Constant.cartProducts.length; i++) {
-            data.add({
-              'id': Constant.cartProducts[i]['variant']['id'],
-              'quantity': Constant.cartProducts[i]['quantity'],
-            });
-          }
-          if (data.isNotEmpty) {
-            ApiHelper.apiHelper.createCheckout(data).then(
-              (value) {
-                log(value.toString());
-                Navigator.push(
+      bottomNavigationBar: Visibility(
+        child: GestureDetector(
+          onTap: () {
+            if (Constant.cartProducts.isEmpty) {
+              Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => WebCheckout(
-                      url: value?['data']['checkoutCreate']['checkout']
-                          ['webUrl'],
-                    ),
-                  ),
+                      builder: (context) => NavigationBarScreen(initIndex: 0)),
+                  (route) => false);
+            } else if (Constant.cartProducts.isNotEmpty) {
+              final List<Map> data = [];
+              for (int i = 0; i < Constant.cartProducts.length; i++) {
+                data.add({
+                  'id': Constant.cartProducts[i]['variant']['id'],
+                  'quantity': Constant.cartProducts[i]['quantity'],
+                });
+              }
+              if (data.isNotEmpty) {
+                ApiHelper.apiHelper.createCheckout(data).then(
+                  (value) {
+                    log(value.toString());
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WebCheckout(
+                          url: value?['data']['checkoutCreate']['checkout']
+                              ['webUrl'],
+                        ),
+                      ),
+                    );
+                  },
                 );
-              },
-            );
-          }
-        },
-        child: Container(
-          alignment: Alignment.center,
-          margin: const EdgeInsets.all(15),
-          height: height * 0.06,
-          decoration: const BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.all(
-              Radius.circular(15),
+              }
+            }
+          },
+          child: Container(
+            alignment: Alignment.center,
+            margin: const EdgeInsets.all(15),
+            height: height * 0.06,
+            decoration: const BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.all(
+                Radius.circular(15),
+              ),
             ),
-          ),
-          child: const Text(
-            "CHECKOUT",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              letterSpacing: 2,
+            child: Text(
+              Constant.cartProducts.isEmpty ? "Continue Shopping" : "CHECKOUT",
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                letterSpacing: 2,
+              ),
             ),
           ),
         ),
@@ -104,9 +120,32 @@ class _CartState extends State<Cart> {
           ),
         ),
       ),
-      body: Constant.cartProducts == null
-          ? const Center(
-              child: Text("Cart is Empty"),
+      body: Constant.cartProducts.isEmpty
+          ? Center(
+              child: Column(
+                children: [
+                  Lottie.asset(
+                    'assets/lottie/empty.json',
+                    height: height * 0.7,
+                    width: width * 0.75,
+                  ),
+                  Column(
+                    children: [
+                      Text(
+                        "Your cart is empty",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        "Check out our new collections",
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             )
           : ListView.builder(
               itemCount: Constant.cartProducts.length,
@@ -156,6 +195,8 @@ class _CartState extends State<Cart> {
                                   ),
                                   IconButton(
                                     onPressed: () {
+                                      Get.snackbar(
+                                          'Success', 'Item removed from cart');
                                       Constant.cartProducts.removeAt(index);
                                       setState(() {});
                                     },

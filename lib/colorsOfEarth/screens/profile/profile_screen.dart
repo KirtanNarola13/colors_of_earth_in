@@ -1,6 +1,9 @@
+import 'dart:async';
+
+import 'package:colors_of_earth/colorsOfEarth/screens/profile/controller/loginController.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 
 import 'authantication/sign_in.dart';
 
@@ -12,21 +15,39 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool isLogin = false;
-
-  checkIsLogin() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isLogin = prefs.getBool('isUserLogin') ?? false;
-    });
-    Logger().i("isLogin profile initState: $isLogin");
-  }
+  LoginController loginController =
+      Get.put(LoginController(), tag: 'loginController');
 
   @override
   void initState() {
     // TODO: implement initState
-    checkIsLogin();
+    loginController.checkIsLogin();
     super.initState();
+  }
+
+  showColorsOfEarthLoading() {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return Container(
+          height: double.infinity,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.5),
+          ),
+          child: Shimmer.fromColors(
+            baseColor: Colors.grey,
+            highlightColor: Colors.transparent,
+            child: Padding(
+              padding: const EdgeInsets.all(60.0),
+              child: Image(
+                image: AssetImage('assets/colorsOfEarthLogo.png'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Widget build(BuildContext context) {
@@ -42,48 +63,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
           "Account",
           style: TextStyle(fontSize: 16),
         ),
-        elevation: 2,
         shadowColor: Colors.black,
       ),
       body: Column(
         children: [
           Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const CircleAvatar(
-                    radius: 50,
-                    backgroundImage: NetworkImage(
-                        "https://cdn1.iconfinder.com/data/icons/user-pictures/101/malecostume-512.png"),
+            child: Obx(
+              () => Container(
+                padding: const EdgeInsets.all(10),
+                margin: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(10),
                   ),
-                  (isLogin)
-                      ? Container()
-                      : Container(
-                          alignment: Alignment.center,
-                          height: height * 0.045,
-                          color: Colors.black,
-                          child: const Text(
-                            "CREATE ACCOUNT",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                  (isLogin)
-                      ? Container()
-                      : GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SignIn(),
-                              ),
-                            );
-                          },
-                          child: Container(
+                  border: Border.all(
+                    color: Colors.grey.withOpacity(0.5),
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const CircleAvatar(
+                      radius: 50,
+                      backgroundImage: NetworkImage(
+                          "https://cdnl.iconscout.com/lottie/premium/thumb/man-avatar-animation-download-in-lottie-json-gif-static-svg-file-formats--looking-side-boy-person-avatars-pack-people-animations-4639489.gif"),
+                    ),
+                    (loginController.isLogin.value)
+                        ? Container(
                             alignment: Alignment.center,
                             height: height * 0.045,
                             decoration: BoxDecoration(
@@ -91,16 +98,76 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 color: Colors.black,
                               ),
                             ),
-                            child: const Text(
-                              "Already have an account? SignIn",
-                              style: TextStyle(
+                            child: Text(
+                              "${loginController.Name}",
+                              style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 12,
                               ),
                             ),
+                          )
+                        : Container(
+                            alignment: Alignment.center,
+                            height: height * 0.045,
+                            color: Colors.black,
+                            child: const Text(
+                              "CREATE ACCOUNT",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                              ),
+                            ),
                           ),
-                        ),
-                ],
+                    (loginController.isLogin.value)
+                        ? GestureDetector(
+                            onTap: () {
+                              showColorsOfEarthLoading();
+                              Timer(Duration(seconds: 2), () {
+                                loginController.logout();
+                                Navigator.pop(context);
+                              });
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              height: height * 0.045,
+                              color: Colors.black,
+                              child: const Text(
+                                "Logout",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          )
+                        : GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const SignIn(),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              height: height * 0.045,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.black,
+                                ),
+                              ),
+                              child: const Text(
+                                "Already have an account? SignIn",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -109,14 +176,62 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: const EdgeInsets.all(10),
               alignment: Alignment.centerLeft,
               color: Colors.white,
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text("📦 Trake Order"),
-                  Text("🔁 Return / Exchange Order"),
-                  Text("🧑🏻‍🚀 Contact Us"),
-                  Text("📄 Privacy Policy"),
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    alignment: Alignment.centerLeft,
+                    width: double.infinity,
+                    height: height * 0.045,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade50,
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.2),
+                      ),
+                    ),
+                    child: Text("📦 View Order"),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    alignment: Alignment.centerLeft,
+                    width: double.infinity,
+                    height: height * 0.045,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade50,
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.2),
+                      ),
+                    ),
+                    child: Text("🏢 About us"),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    alignment: Alignment.centerLeft,
+                    width: double.infinity,
+                    height: height * 0.045,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade50,
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.2),
+                      ),
+                    ),
+                    child: Text("🧑🏻‍🚀 Contact Us"),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    alignment: Alignment.centerLeft,
+                    width: double.infinity,
+                    height: height * 0.045,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade50,
+                      border: Border.all(
+                        color: Colors.grey.withOpacity(0.2),
+                      ),
+                    ),
+                    child: Text("📄 Privacy Policy"),
+                  ),
                 ],
               ),
             ),

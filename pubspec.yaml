@@ -66,6 +66,8 @@ dependencies:
   shared_preferences: ^2.3.2
   audioplayers:
   flutter_shakemywidget: ^1.0.5+1
+  lottie:
+  badges: ^3.1.2
 
 dev_dependencies:
   flutter_test:
@@ -93,6 +95,8 @@ flutter:
   assets:
     - assets/sound/addToCart.mp3
     - assets/colorsOfEarthLogo.png
+    - assets/favIcon.png
+    - assets/lottie/
   #   - images/a_dot_ham.jpeg
 
 

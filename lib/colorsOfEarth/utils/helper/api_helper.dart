@@ -253,6 +253,7 @@ class ApiHelper {
         'X-Shopify-Access-Token': Constant.apiAccessToken,
       });
       if (response.statusCode == 200) {
+        log("Get Order: ${response.body} all orders");
         return response.body;
       }
     } catch (e) {
@@ -260,5 +261,25 @@ class ApiHelper {
       log('Error in getOrder: $e');
     }
     return null;
+  }
+
+//todo: Cancel Order
+  Future<http.Response> cancelOrder(int orderId) async {
+    // Replace with your actual Shopify API URL and Authentication token
+    final String apiUrl =
+        "${Constant.storeUrl}/admin/api/2023-10/orders/$orderId/cancel.json";
+    final String accessToken = Constant.apiAccessToken;
+
+    // Make the API call
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': accessToken,
+      },
+    );
+
+    // Return the response
+    return response;
   }
 }

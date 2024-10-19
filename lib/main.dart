@@ -2,7 +2,6 @@ import 'package:colors_of_earth/colorsOfEarth/constant/constant.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shopify_flutter/shopify_config.dart';
 
@@ -17,11 +16,6 @@ Future<void> main() async {
   await _requestPermissions();
 
   final fcmToken = await FirebaseMessaging.instance.getToken();
-
-  OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-  OneSignal.initialize('088cb45d-7d0a-4b81-ba27-b976cca037a7');
-  OneSignal.Notifications.requestPermission(true);
-
   ShopifyConfig.setConfig(
       storefrontAccessToken: 'eef4c0d63aac81b19b0a033fda42e239',
       storeUrl: 'https://colorsofearth.in',

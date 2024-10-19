@@ -144,14 +144,18 @@ class _NewCollectionScreenState extends State<NewCollectionScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Shimmer.fromColors(
-                                          baseColor: Colors.grey,
-                                          highlightColor: Colors.black54,
-                                          child: Text(
-                                            collection[index]['title'],
-                                            style: const TextStyle(
-                                              fontSize: 27,
-                                              fontWeight: FontWeight.bold,
+                                        SizedBox(
+                                          width: width * 0.65,
+                                          child: Shimmer.fromColors(
+                                            baseColor: Colors.grey,
+                                            highlightColor: Colors.black54,
+                                            child: Text(
+                                              collection[index]['title'],
+                                              style: const TextStyle(
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
                                         ),
