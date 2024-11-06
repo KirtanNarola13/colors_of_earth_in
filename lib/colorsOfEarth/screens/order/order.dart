@@ -57,25 +57,30 @@ class _OrderState extends State<Order> {
               ),
             );
           },
-          child: Container(
-            alignment: Alignment.center,
-            margin: const EdgeInsets.all(15),
-            height: height * 0.06,
-            decoration: const BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.all(
-                Radius.circular(15),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                alignment: Alignment.center,
+                height: height * 0.06,
+                width: width * 0.95,
+                decoration: const BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(15),
+                  ),
+                ),
+                child: const Text(
+                  "Login",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    letterSpacing: 2,
+                  ),
+                ),
               ),
-            ),
-            child: const Text(
-              "Login",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                letterSpacing: 2,
-              ),
-            ),
+            ],
           ),
         ),
       ),
@@ -305,9 +310,6 @@ class _OrderState extends State<Order> {
                           // Return the order header and the list of line items
                           return Column(
                             children: [
-                              Text(
-                                "Order ID : ${order['id']}",
-                              ),
                               Column(children: lineItemWidgets),
                             ],
                           );
@@ -325,7 +327,7 @@ class _OrderState extends State<Order> {
                       padding: const EdgeInsets.all(60.0),
                       child: Image(
                         image: NetworkImage(
-                          Constant.constant.remoteConfig
+                          Constants.instance.remoteConfig
                                   ?.getString('colorsOfearth') ??
                               "",
                         ),

@@ -377,7 +377,7 @@ class _ApiDetailScreenState extends State<ApiDetailScreen> {
                                               ),
                                             ),
                                             SizedBox(height: height * 0.02),
-                                            GestureDetector(
+                                            InkWell(
                                               onTap: () {
                                                 if (currentSize != "") {
                                                   getFinalVariant(
@@ -424,9 +424,9 @@ class _ApiDetailScreenState extends State<ApiDetailScreen> {
                                                   }
                                                 }
                                               },
-                                              child: Container(
-                                                alignment: Alignment.center,
-                                                margin: const EdgeInsets.all(5),
+                                              child: Ink(
+                                                // alignment: Alignment.center,
+                                                // margin: const EdgeInsets.all(5),
                                                 height: height * 0.05,
                                                 decoration: const BoxDecoration(
                                                   color: Colors.black,
@@ -435,15 +435,18 @@ class _ApiDetailScreenState extends State<ApiDetailScreen> {
                                                           Radius.circular(10)),
                                                 ),
                                                 child: Obx(
-                                                  () => Text(
-                                                    (addToCartController.isExist
-                                                                .value ==
-                                                            true)
-                                                        ? "View Cart"
-                                                        : "Add to cart",
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 16,
+                                                  () => Center(
+                                                    child: Text(
+                                                      (addToCartController
+                                                                  .isExist
+                                                                  .value ==
+                                                              true)
+                                                          ? "View Cart"
+                                                          : "Add to cart",
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 16,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -490,19 +493,11 @@ class _ApiDetailScreenState extends State<ApiDetailScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const ShakeMe(
-                              // 4. pass the GlobalKey as an argument
-
-                              // 5. configure the animation parameters
-                              shakeCount: 3,
-                              shakeOffset: 10,
-                              shakeDuration: Duration(milliseconds: 500),
-                              child: Icon(
-                                Icons.shopping_bag_outlined,
-                                color: Colors.white,
-                                size: 18,
-                                weight: 0.5,
-                              ),
+                            Icon(
+                              Icons.shopping_bag_outlined,
+                              color: Colors.white,
+                              size: 18,
+                              weight: 0.5,
                             ),
                             const SizedBox(
                               width: 6,

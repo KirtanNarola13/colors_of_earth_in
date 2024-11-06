@@ -27,7 +27,7 @@ class AddToCartController extends GetxController {
 
   calculateCartLength() {
     cartLength.value = Constant.cartProducts.length;
-    Logger().i("Cart length: $cartLength");
+    // Logger().i("Cart length: $cartLength");
   }
 
   checkProductExistInCart(int productId) {

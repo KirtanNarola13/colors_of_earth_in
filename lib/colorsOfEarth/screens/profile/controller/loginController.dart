@@ -1,3 +1,4 @@
+import 'package:colors_of_earth/colorsOfEarth/utils/app_pref.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -5,13 +6,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LoginController extends GetxController {
   // Observables to manage the login state
   RxBool isLogin = false.obs;
-  RxString Name = "".obs;
 
-  Future<void> login() async {
+  Future<void> login(String name) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isUserLogin', true); // Set isUserLogin to true
+    await prefs.setBool('isUserLogin', true);
+    AppPref.loginName = name;
     isLogin.value = true; // Update isLogin to true
 
+    Logger()
+        .i("Parameter name: $name Controller Name: ${prefs.getString('name')}");
     Logger().i("User logged in. isUserLogin: ${prefs.getBool('isUserLogin')}");
   }
 

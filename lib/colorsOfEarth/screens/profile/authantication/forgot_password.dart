@@ -104,7 +104,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             SizedBox(
               height: height * 0.035,
             ),
-            GestureDetector(
+            InkWell(
               onTap: () {
                 if (formKey.currentState!.validate()) {
                   Shopify.shopify.passWordResetEmail(emailController.text);
@@ -133,16 +133,18 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   });
                 }
               },
-              child: Container(
-                alignment: Alignment.center,
+              child: Ink(
+                // alignment: Alignment.center,
                 height: height * 0.045,
                 color: Colors.black,
-                child: const Text(
-                  "EMAIL RESET LINK TO ME",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
+                child: Center(
+                  child: const Text(
+                    "EMAIL RESET LINK TO ME",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),

@@ -106,6 +106,8 @@ class ViewCollectionProduct extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
                             ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
                           ),
                         ),
                       ],

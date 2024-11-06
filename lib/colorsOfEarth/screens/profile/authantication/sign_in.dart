@@ -195,7 +195,7 @@ class _SignInState extends State<SignIn> {
               SizedBox(
                 height: height * 0.035,
               ),
-              GestureDetector(
+              InkWell(
                 onTap: () {
                   FocusScope.of(context).unfocus();
 
@@ -206,8 +206,7 @@ class _SignInState extends State<SignIn> {
                       .then((value) async {
                     if (value != null) {
                       Logger().i("Login Success $value");
-                      loginController.Name = emailController.text.obs;
-                      loginController.login();
+                      loginController.login(emailController.text.split('@')[0]);
                       Navigator.pop(context);
                       Navigator.pop(context);
 
@@ -225,16 +224,19 @@ class _SignInState extends State<SignIn> {
                     }
                   });
                 },
-                child: Container(
-                  alignment: Alignment.center,
+                child: Ink(
+                  // alignment: Alignment.center,
+
                   height: height * 0.045,
                   color: Colors.black,
-                  child: const Text(
-                    "SIGN IN",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+                  child: Center(
+                    child: const Text(
+                      "SIGN IN",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),

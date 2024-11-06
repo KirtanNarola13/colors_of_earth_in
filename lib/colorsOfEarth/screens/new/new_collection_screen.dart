@@ -156,12 +156,11 @@ class _NewCollectionScreenState extends State<NewCollectionScreen> {
                                                 fontWeight: FontWeight.bold,
                                               ),
                                               overflow: TextOverflow.ellipsis,
+                                              maxLines: 2,
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
-                                          height: height * 0.05,
-                                        ),
+                                        Spacer(),
                                         Container(
                                           alignment: Alignment.center,
                                           height: height * 0.03,

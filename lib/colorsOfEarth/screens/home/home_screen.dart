@@ -33,7 +33,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 initRemoteConfig() {
-  Constant.constant.remoteConfig = FirebaseRemoteConfig.instance;
+  Constants.instance.remoteConfig = FirebaseRemoteConfig.instance;
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -108,10 +108,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   child: Image(
-                    image: NetworkImage(
-                      Constant.constant.remoteConfig
-                              ?.getString('colorsOfearth') ??
-                          "",
+                    image: AssetImage(
+                      "assets/colorsOfEarthLogo.png" ?? "",
                     ),
                   ),
                 ),
@@ -588,7 +586,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: height * 0.22,
                       width: width,
                       child: FancyShimmerImage(
-                        imageUrl: Constant.constant.remoteConfig
+                        imageUrl: Constants.instance.remoteConfig
                                 ?.getString('middle_banner') ??
                             homeBanner[0],
                         shimmerBaseColor: Colors.grey.shade300,
@@ -752,7 +750,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           image: NetworkImage(
-                            Constant.constant.remoteConfig
+                            Constants.instance.remoteConfig
                                     ?.getString('bottom_banner') ??
                                 homeBanner[0],
                           ),
@@ -868,7 +866,7 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 List homeBanner = [
-  Constant.constant.remoteConfig?.getString('trending_banner_0'),
-  Constant.constant.remoteConfig?.getString('trending_banner_1'),
-  Constant.constant.remoteConfig?.getString('trending_banner_2'),
+  Constants.instance.remoteConfig?.getString('trending_banner_0'),
+  Constants.instance.remoteConfig?.getString('trending_banner_1'),
+  Constants.instance.remoteConfig?.getString('trending_banner_2'),
 ];

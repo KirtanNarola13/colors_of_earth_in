@@ -1,11 +1,12 @@
 import 'package:colors_of_earth/colorsOfEarth/constant/constant.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shopify_flutter/shopify_config.dart';
 
 import 'colorsOfEarth/colors_of_earth.dart';
+import 'colorsOfEarth/utils/app_pref.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -15,7 +16,6 @@ Future<void> main() async {
   );
   await _requestPermissions();
 
-  final fcmToken = await FirebaseMessaging.instance.getToken();
   ShopifyConfig.setConfig(
       storefrontAccessToken: 'eef4c0d63aac81b19b0a033fda42e239',
       storeUrl: 'https://colorsofearth.in',
@@ -31,9 +31,12 @@ Future<void> main() async {
       language: 'en'
 
       /// Store locale | default : en
+
       );
 
-  Constant.constant.loadFireConfig();
+  await loadFireConfig();
+  AppPref.init();
+
   runApp(
     const ColorsOfEarth(),
   );
@@ -46,5 +49,25 @@ Future<void> _requestPermissions() async {
     // Handle permission denied
     // You may want to show a dialog or message to the user
     // explaining that the app needs notification permissions
+  }
+}
+
+Future loadFireConfig() async {
+  Constants.instance.remoteConfig = FirebaseRemoteConfig.instance;
+
+  await Constants.instance.remoteConfig?.setConfigSettings(
+    RemoteConfigSettings(
+      fetchTimeout: const Duration(seconds: 0),
+      minimumFetchInterval: const Duration(seconds: 0),
+    ),
+  );
+
+  try {
+    await Constants.instance.remoteConfig
+        ?.fetchAndActivate()
+        .timeout(const Duration(seconds: 10));
+  } catch (err) {
+    print("ERROR REMOTE CONFIG : $err");
+    true;
   }
 }

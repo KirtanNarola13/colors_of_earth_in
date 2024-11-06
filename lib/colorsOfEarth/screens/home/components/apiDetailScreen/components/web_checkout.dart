@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:colors_of_earth/colorsOfEarth/utils/constant/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -64,6 +65,7 @@ class _WebCheckoutState extends State<WebCheckout> {
                 NavigationAction navigationAction) async {
               var url = navigationAction.request.url.toString();
               if (url.contains("thank_you")) {
+                Constant.cartProducts.clear();
                 Navigator.pop(context);
                 return NavigationActionPolicy.CANCEL;
               } else if (url == "https://colorsofearth.in/") {
